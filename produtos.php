@@ -52,7 +52,9 @@
             $nome = ($_GET['nome']);
         }
 
-        $sql = "SELECT * FROM produtos WHERE nome like '%$nome%' ";
+        $sql = "SELECT produtos.*, categorias.nome AS categoria_nome
+                    FROM produtos
+                INNER JOIN categorias ON produtos.categoria_id = categorias.id;";
 
         $retorno = $con->query($sql);
 
@@ -63,7 +65,7 @@
              <td>ID</td> 
              <td>NOME</td>
              <td>PREÇO</td>
-             <td>CATEGORIA ID</td>
+             <td>NOME DA CATEGORIA ID</td>
              <td>IMAGEM</td>
              <td>OPÇÕES</td>
              </thead> 
@@ -79,7 +81,7 @@
              <td>ID</td> 
              <td>NOME</td>
              <td>PREÇO</td>
-             <td>CATEGORIA ID</td>
+             <td>NOME DA CATEGORIA</td>
              <td>IMAGEM</td>
              <td>OPÇÕES</td>
              </thead> 
@@ -97,7 +99,7 @@
                         <td>" . $linha['id'] . "</td>
                         <td>" . $linha['nome'] . "</td>
                         <td>" . $linha['preco'] . "</td>   
-                        <td>" . $linha['categoria_id'] . "</td>                        
+                        <td>" . $linha['categoria_nome'] . "</td>                        
                         <td>" . $linha['imagem'] . "</td>                        
                         <td>
                             <a href='/rfstore_frontend/produto_deletar.php?id=" . $linha["id"] . "' class='btn btn-danger'> 🗑️ </a>

@@ -146,9 +146,6 @@
       echo '</div>';
     ?>
 
-
-
-
     <div class="grid">
       <?php
       $id = "";
@@ -169,7 +166,9 @@
             echo "<p class='preco'>R$ " . number_format($produto['preco'], 2, ',', '.') . "</p>";
             echo "<div class='botoes'>";
             echo "<a class='botao' href='produto.php?id=" . $produto['id'] . "'>Ver Produto</a>";
-            echo "<button class='botao'>Adicionar ao carrinho</button>";
+            echo "<form action='adicionar_carrinho.php' method='get'>";
+            echo "<button class='botao' type='submit' name='id' value='" . $produto['id'] . "'>Adicionar ao carrinho</button>";
+            echo "</form>";
             echo "</div>";
             echo "</div>";              
           }

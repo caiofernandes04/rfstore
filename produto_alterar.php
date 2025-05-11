@@ -9,7 +9,14 @@
 
     $id = @$_GET["id"];
 
-    $sql = "SELECT * FROM produtos WHERE id='$id'";
+    $sql = "SELECT 
+                produtos.*,
+                categorias.nome as categoria_nome
+            FROM 
+                produtos
+            INNER JOIN 
+                categorias ON produtos.categoria_id = categorias.id
+            WHERE produtos.id = '$id'";
     $resultado = $con->query($sql);
     $dados = mysqli_fetch_assoc($resultado);
 ?>
@@ -70,8 +77,8 @@
             </div>
             
             <div>
-                <span>ID da categoria:</span>
-                <input type="text" name="categoria_id" value="<?php echo $dados["categoria_id"]; ?>" />
+                <span>Nome da categoria:</span>
+                <input type="text" name="preco" value="<?php echo $dados["categoria_nome"]; ?>" />
             </div>
 
             <div>
