@@ -123,7 +123,8 @@
               echo "<div class='produto-info'>";
               echo "<h2>" . $produto['nome'] . "</h2>";
               echo "<p class='preco'>R$ " . number_format($produto['preco'], 2, ',', '.') . "</p>";
-              echo "<button class='botao-comprar'>Comprar Agora</button>";
+              echo "<form action='adicionar_carrinho.php' method='get'>";
+              echo "<button class='botao-comprar' type = 'submit' name = 'id' value = '" . $produto['id'] . "'>Comprar Agora</button>"; 
               echo "</div>";
               echo "</div>";                
             } 
