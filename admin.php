@@ -49,4 +49,68 @@ if (isset($_POST['reset_session'])) {
 
 </body>
 
+<body>
+    <tbody>
+        <?php
+        include("banco.php");
+
+        $sql = "SELECT vendas.id AS venda_id,
+                       vendas.data_venda,
+                       produtos.nome AS nome_produto,
+                       produtos.preco,
+                       vendas_itens.quantidade
+                FROM vendas
+                INNER JOIN vendas_itens ON vendas.id = vendas_itens.venda_id
+                INNER JOIN produtos ON vendas_itens.produto_id = produtos.id
+                ORDER BY vendas.id, vendas.data_venda";
+
+        $retorno = $con->query($sql);
+
+        if ($retorno->num_rows > 0) {
+            echo "
+            <table class='table table-hover'>
+                <thead>
+                    <tr>
+                        <th>ID da Venda</th>
+                        <th>Data</th>
+                        <th>Produto</th>
+                        <th>Preço Unitário</th>
+                        <th>Quantidade</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+            ";
+
+            $ultima_venda = "";
+
+            foreach ($retorno as $linha) {
+                $venda_id = $linha['venda_id'];
+                $subtotal = $linha['preco'] * $linha['quantidade'];
+
+                if ($venda_id !== $ultima_venda) {
+                    echo "<tr><td colspan='6'><strong>Venda #$venda_id - " . date('d/m/Y H:i', strtotime($linha['data_venda'])) . "</strong></td></tr>";
+                    $ultima_venda = $venda_id;
+                }
+
+                echo "
+                    <tr>
+                        <td>" . $linha['venda_id'] . "</td>
+                        <td>" . date('d/m/Y H:i', strtotime($linha['data_venda'])) . "</td>
+                        <td>" . $linha['nome_produto'] . "</td>
+                        <td>R$ " . number_format($linha['preco'], 2, ',', '.') . "</td>
+                        <td>" . $linha['quantidade'] . "</td>
+                        <td>R$ " . number_format($subtotal, 2, ',', '.') . "</td>
+                    </tr>
+                ";
+            }
+
+            echo "</tbody></table>";
+        } else {
+            echo "<p style='text-align:center;'>Nenhuma venda encontrada.</p>";
+        }
+        ?>
+    </tbody>
+</body>
+
 </html>

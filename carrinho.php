@@ -81,7 +81,7 @@ session_start(); // acessa os dados do carrinho
 
        
         <a href="produtos.php" class="btn-continuar">Continuar Comprando</a>
-        <a href="agradecimento.php" class="btn-finalizar">Finalizar Compra</a>
+        <a href="adicionar_venda.php" class="btn-finalizar">Finalizar Compra</a>
     </div>
 </body>
 </html>
