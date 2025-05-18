@@ -1,5 +1,4 @@
 <?php
-// Liga a sessão
 session_start();
 
 // Conecta no banco (supondo que banco.php já faz isso)

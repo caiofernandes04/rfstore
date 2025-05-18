@@ -1,5 +1,5 @@
 <?php
-session_start(); // acessa os dados do carrinho
+session_start();
 ?>
 <!DOCTYPE html>
 <html>

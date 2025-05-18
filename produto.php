@@ -100,7 +100,6 @@
       <nav>
         <a href="index.php">Home</a>
         <a href="carrinho.php">Carrinho</a>
-        <a href="checkout.php">Checkout</a>
       </nav>
     </header>
     <main>

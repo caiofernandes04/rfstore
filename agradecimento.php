@@ -1,5 +1,5 @@
 <?php
-session_start(); //acessa os dados do carrinho
+session_start();
 
 // se o carrinho está vazio, redireciona para a página principal
 if (empty($_SESSION['carrinho'])) {

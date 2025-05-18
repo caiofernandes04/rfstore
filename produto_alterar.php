@@ -19,6 +19,10 @@
             WHERE produtos.id = '$id'";
     $resultado = $con->query($sql);
     $dados = mysqli_fetch_assoc($resultado);
+
+    // Consulta simples apenas para pegar todas categorias
+    $sql_categorias = "SELECT * FROM categorias";
+    $categorias = $con->query($sql_categorias);
 ?>
 
 <!DOCTYPE html>
@@ -46,7 +50,7 @@
             border-radius: 10px;
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
         }
-        input[type="text"] {
+        input[type="text"], select {
             background-color: white;
             color: black;
             border: 1px solid black;
@@ -77,8 +81,15 @@
             </div>
             
             <div>
-                <span>Nome da categoria:</span>
-                <input type="text" name="preco" value="<?php echo $dados["categoria_nome"]; ?>" />
+                <span>Categoria:</span>
+                <select name="categoria_id">
+                    <?php while($categoria = mysqli_fetch_assoc($categorias)): ?>
+                        <option value="<?php echo $categoria['id']; ?>" 
+                            <?php echo ($categoria['id'] == $dados['categoria_id']) ? 'selected' : ''; ?>>
+                            <?php echo $categoria['nome']; ?>
+                        </option>
+                    <?php endwhile; ?>
+                </select>
             </div>
 
             <div>

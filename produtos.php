@@ -24,7 +24,7 @@
     <h1 style="font-size: 32px; color:rgb(0, 0, 0); margin-bottom: 10px; text-align: center; font-family: Arial, sans-serif;">
         Produtos
     </h1>
-    <form action="admin.php" method="get" style="text-align: center;">
+    <form action="produtos.php" method="get" style="text-align: center;">
         <label for="aluno"> Nome do Produto:</label>
         <input type="text" name="nome">
 
@@ -54,7 +54,8 @@
 
         $sql = "SELECT produtos.*, categorias.nome AS categoria_nome
                     FROM produtos
-                INNER JOIN categorias ON produtos.categoria_id = categorias.id;";
+                INNER JOIN categorias ON produtos.categoria_id = categorias.id
+                WHERE produtos.nome like '%$nome%'";
 
         $retorno = $con->query($sql);
 

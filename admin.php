@@ -32,9 +32,9 @@ if (isset($_POST['reset_session'])) {
     <h1 style="font-size: 32px; color:rgb(0, 0, 0); margin-bottom: 10px; text-align: center; font-family: Arial, sans-serif;">
         Área de administração
     </h1>
-    <form action="area_segura.php" method="get" style="text-align: center;">
+    <form action="admin.php" method="get" style="text-align: center;">
         <label for="aluno"> Id da venda:</label>
-        <input type="text" name="id">
+        <input type="text" name="vendas_id">
 
         <button type="submit" value="ENVIAR"> PESQUISAR </button>
         <a href="produtos.php" style="background-color: #00FF00" class="btn btn-success"> PRODUTOS </a>
@@ -54,15 +54,24 @@ if (isset($_POST['reset_session'])) {
         <?php
         include("banco.php");
 
-        $sql = "SELECT vendas.id AS venda_id,
-                       vendas.data_venda,
-                       produtos.nome AS nome_produto,
-                       produtos.preco,
-                       vendas_itens.quantidade
-                FROM vendas
-                INNER JOIN vendas_itens ON vendas.id = vendas_itens.venda_id
-                INNER JOIN produtos ON vendas_itens.produto_id = produtos.id
-                ORDER BY vendas.id, vendas.data_venda";
+        $vendas_id = "";
+
+        if (isset($_GET['vendas_id'])) {
+            $vendas_id = $_GET['vendas_id'];
+        }
+
+
+        $sql = "
+            SELECT vendas.id AS venda_id,
+                vendas.data_venda,
+                produtos.nome AS nome_produto,
+                produtos.preco,
+                vendas_itens.quantidade
+            FROM vendas
+            INNER JOIN vendas_itens ON vendas.id = vendas_itens.venda_id
+            INNER JOIN produtos ON vendas_itens.produto_id = produtos.id
+            WHERE vendas.id LIKE '%$vendas_id%'
+            ORDER BY vendas.id, vendas.data_venda";
 
         $retorno = $con->query($sql);
 
