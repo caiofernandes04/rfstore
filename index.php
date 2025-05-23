@@ -160,7 +160,7 @@
           while ($produto = $resultado->fetch_assoc()) {
             echo "<div class='produto'>";
             echo "<div class='img-container'>";
-            echo "<img src='img/" . $produto['imagem'] . "' alt='" . $produto['nome'] . "'>";
+            echo "<img src='data:image/jpeg;base64,".base64_encode($produto['imagem'])."' alt='".$produto['nome']."'>";
             echo "</div>";
             echo "<h2>" . $produto['nome'] . "</h2>";
             echo "<p class='preco'>R$ " . number_format($produto['preco'], 2, ',', '.') . "</p>";

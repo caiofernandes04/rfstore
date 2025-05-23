@@ -39,7 +39,7 @@ session_start();
             ?>
                 <div class="item-carrinho">
                     <div class="item-img">
-                        <img src="img/<?php echo $item['imagem']; ?>"> <!-- Mostra imagem do produto -->
+                        <img src="data:image/jpeg;base64,<?php echo base64_encode($item['imagem']); ?>" alt="<?php echo $item['nome']; ?>"> <!-- Mostra imagem do produto -->
                     </div>
                     <div class="item-info">
                         <h3><?php echo $item['nome']; ?></h3> <!-- Mostra nome do produto -->

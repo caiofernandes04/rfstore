@@ -64,7 +64,7 @@
 </head>
 <body>
     <div class="cadastro">
-        <form action="produto_alterar_salvar.php" method="post">
+        <form action="produto_alterar_salvar.php" method="post" enctype="multipart/form-data">
             <div>
                 <span>ID do Produto:</span>
                 <input type="text" name="id" value="<?php echo $dados["id"]; ?>" />
@@ -93,8 +93,11 @@
             </div>
 
             <div>
-                <span>Nome da imagem:</span>
-                <input type="text" name="imagem" value="<?php echo $dados["imagem"]; ?>" />
+                <span>Imagem do Produto:</span>
+                <?php if(!empty($dados["imagem"])): ?>
+                    <img src="data:image/jpeg;base64,<?php echo base64_encode($dados['imagem']); ?>" height="50" style="display: block; margin: 5px auto;">
+                <?php endif; ?>
+                <input type="file" name="imagem"/>
             </div>
 
             <div>

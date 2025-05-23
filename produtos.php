@@ -18,6 +18,23 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js"
         integrity="sha384-+sLIOodYLS7CIrQpBjl+C7nPvqq+FbNUBDunl/OZv93DB7Ln/533i8e/mZXLi/P+"
         crossorigin="anonymous"></script>
+    <style>
+    .imagem-produto {
+        max-width: 80px;
+        max-height: 80px;
+        width: auto;
+        height: auto;
+        display: block;
+        margin: 0 auto;
+    }
+    
+    /* Garante que a célula da tabela tenha tamanho fixo */
+    table td:nth-child(5) {
+        width: 100px;
+        height: 100px;
+        padding: 5px !important;
+    }
+</style>
 </head>
 
 <body>
@@ -101,7 +118,7 @@
                         <td>" . $linha['nome'] . "</td>
                         <td>" . $linha['preco'] . "</td>   
                         <td>" . $linha['categoria_nome'] . "</td>                        
-                        <td>" . $linha['imagem'] . "</td>                        
+                        <td><img src='data:image/png;base64," . base64_encode($linha['imagem']) . "' class='imagem-produto'></td>                        
                         <td>
                             <a href='/rfstore_frontend/produto_deletar.php?id=" . $linha["id"] . "' class='btn btn-danger'> 🗑️ </a>
                             <a href='/rfstore_frontend/produto_alterar.php?id=" . $linha["id"] . "' class='btn btn-primary'> ✏️ </a>

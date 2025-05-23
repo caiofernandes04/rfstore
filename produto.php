@@ -118,7 +118,7 @@
           if ($resultado->num_rows > 0) {
             while ($produto = $resultado->fetch_assoc()) {
               echo "<div class='produto'>";
-              echo "<img src='img/" . $produto['imagem'] . "' alt='" . $produto['nome'] . "'>";
+              echo "<img src='data:image/png;base64," . base64_encode($produto['imagem']) . "' class='imagem-produto'>";
               echo "<div class='produto-info'>";
               echo "<h2>" . $produto['nome'] . "</h2>";
               echo "<p class='preco'>R$ " . number_format($produto['preco'], 2, ',', '.') . "</p>";

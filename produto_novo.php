@@ -4,7 +4,25 @@
     {
     header('location:index.php');
     }
+
+    include("banco.php");
+
+    $sql = "SELECT 
+                produtos.*,
+                categorias.nome as categoria_nome
+            FROM 
+                produtos
+            INNER JOIN 
+                categorias ON produtos.categoria_id = categorias.id";
+
+    $resultado = $con->query($sql);
+    $dados = mysqli_fetch_assoc($resultado);
+
+    // Consulta simples apenas para pegar todas categorias
+    $sql_categorias = "SELECT * FROM categorias";
+    $categorias = $con->query($sql_categorias);
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -45,7 +63,7 @@
 </head>
 <body>
     <div class="cadastro">
-        <form action="produto_novo_salvar.php" method="post">
+        <form action="produto_novo_salvar.php" method="post" enctype="multipart/form-data">
             <div>
                 <span>Nome do Produto</span>
                 <input type="text" name="nome"/>
@@ -57,13 +75,20 @@
             </div>
             
             <div>
-                <span>ID da categoria</span>
-                <input type="text" name="categoria"/>
+                <span>Categoria:</span>
+                <select name="categoria_id">
+                    <?php while($categoria = mysqli_fetch_assoc($categorias)): ?>
+                        <option value="<?php echo $categoria['id']; ?>" 
+                            <?php echo ($categoria['id'] == $dados['categoria_id']) ?>>
+                            <?php echo $categoria['nome']; ?>
+                        </option>
+                    <?php endwhile; ?>
+                </select>
             </div>
 
             <div>
-                <span>Nome da imagem</span>
-                <input type="text" name="imagem"/>
+                <span>Imagem do Produto</span>
+                <input type="file" name="imagem" required/>
             </div>
 
             <div>
