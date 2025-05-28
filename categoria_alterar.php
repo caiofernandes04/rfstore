@@ -1,16 +1,28 @@
 <?php
+    
     include("banco.php");
 
+     
     session_start();
-        if((!isset ($_SESSION['login']) == true) and (!isset ($_SESSION['senha']) == true))
-        {
-        header('location:index.php');
-        }
 
+    // Verifica se o usuário está autenticado (login e senha nas variáveis de sessão)
+    // Caso não esteja, redireciona para a página de login
+    if((!isset ($_SESSION['login']) == true) and (!isset ($_SESSION['senha']) == true))
+    {
+        header('location:index.php');
+    }
+
+    // Recupera o valor da variável "id" que foi enviada via URL (método GET)
+    // O operador @ evita que erros sejam exibidos caso a variável não esteja definida
     $id = @$_GET["id"];
 
+    // Monta a consulta SQL para buscar os dados da categoria com o ID fornecido
     $sql = "SELECT * FROM categorias WHERE id='$id'";
+
+    // Executa a consulta no banco de dados
     $resultado = $con->query($sql);
+
+    // Recupera os dados retornados pela consulta em forma de array associativo
     $dados = mysqli_fetch_assoc($resultado);
 ?>
 

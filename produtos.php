@@ -1,8 +1,11 @@
 <?php
-    session_start();
+    session_start(); // Inicia a sessão
+
+    // Verifica se as variáveis de sessão 'login' e 'senha' estão definidas.
+    // Caso não estejam, redireciona o usuário para a página de login (index.php).
     if((!isset ($_SESSION['login']) == true) and (!isset ($_SESSION['senha']) == true))
     {
-    header('location:index.php');
+        header('location:index.php');
     }
 ?>
 
@@ -60,73 +63,76 @@
     <tbody>
 
         <?php
+    include("banco.php"); // Inclui o arquivo de conexão com o banco de dados
 
-        include("banco.php");
-        
-        $nome = "";
-        if (isset($_GET['nome'])) // isset() - essa função significa "existe?"
-        {
-            $nome = ($_GET['nome']);
-        }
+    $nome = "";
+    if (isset($_GET['nome'])) // Verifica se o parâmetro 'nome' foi enviado via GET
+    {
+        $nome = ($_GET['nome']); // Atribui o valor à variável $nome
+    }
 
-        $sql = "SELECT produtos.*, categorias.nome AS categoria_nome
-                    FROM produtos
-                INNER JOIN categorias ON produtos.categoria_id = categorias.id
-                WHERE produtos.nome like '%$nome%'";
+    // Cria a query SQL com join entre produtos e categorias, buscando pelo nome do produto
+    $sql = "SELECT produtos.*, categorias.nome AS categoria_nome
+            FROM produtos
+            INNER JOIN categorias ON produtos.categoria_id = categorias.id
+            WHERE produtos.nome like '%$nome%'";
 
-        $retorno = $con->query($sql);
+    $retorno = $con->query($sql); // Executa a query
 
-        if ($retorno->num_rows == 1) {
-            echo " 
-             <table class = 'table table-hower'>
-             <thead>
-             <td>ID</td> 
-             <td>NOME</td>
-             <td>PREÇO</td>
-             <td>NOME DA CATEGORIA ID</td>
-             <td>IMAGEM</td>
-             <td>OPÇÕES</td>
-             </thead> 
-             <p style='text-align: center;'>
-                Encontrado $retorno->num_rows produtos.<br>
-            </p>
-             ";
-        } else if ($retorno->num_rows > 1) {
+    // Exibe cabeçalho da tabela conforme o número de resultados encontrados
+    if ($retorno->num_rows == 1) {
+        echo " 
+         <table class = 'table table-hower'>
+         <thead>
+         <td>ID</td> 
+         <td>NOME</td>
+         <td>PREÇO</td>
+         <td>NOME DA CATEGORIA ID</td>
+         <td>IMAGEM</td>
+         <td>OPÇÕES</td>
+         </thead> 
+         <p style='text-align: center;'>
+            Encontrado $retorno->num_rows produtos.<br>
+        </p>
+         ";
+    } else if ($retorno->num_rows > 1) {
+        echo " 
+         <table class = 'table table-hower'>
+         <thead>
+         <td>ID</td> 
+         <td>NOME</td>
+         <td>PREÇO</td>
+         <td>NOME DA CATEGORIA</td>
+         <td>IMAGEM</td>
+         <td>OPÇÕES</td>
+         </thead> 
+         <p style='text-align: center;'>
+            Encontrados $retorno->num_rows produtos.<br>
+        </p>
+         ";
+    } else {
+        // Caso nenhum produto seja encontrado com o nome pesquisado
+        echo "Nenhum produto com o nome \"" . $nome . "\" foi encontrado. Tente novamente outro nome! <br>";
+    }
 
-            echo " 
-             <table class = 'table table-hower'>
-             <thead>
-             <td>ID</td> 
-             <td>NOME</td>
-             <td>PREÇO</td>
-             <td>NOME DA CATEGORIA</td>
-             <td>IMAGEM</td>
-             <td>OPÇÕES</td>
-             </thead> 
-             <p style='text-align: center;'>
-                Encontrados $retorno->num_rows produtos.<br>
-            </p>
-             ";
-        } else {
-            echo "Nenhum produto com o nome \"" . $nome . "\" foi encontrado. Tente novamente outro nome! <br>";
-        }
+    // Exibe cada produto encontrado em uma linha da tabela
+    foreach ($retorno as $linha) {
+        echo "
+                <tr>
+                    <td>" . $linha['id'] . "</td>
+                    <td>" . $linha['nome'] . "</td>
+                    <td>" . $linha['preco'] . "</td>   
+                    <td>" . $linha['categoria_nome'] . "</td>                        
+                    <td><img src='data:image/png;base64," . base64_encode($linha['imagem']) . "' class='imagem-produto'></td>                        
+                    <td>
+                        <a href='/rfstore_frontend/produto_deletar.php?id=" . $linha["id"] . "' class='btn btn-danger'> 🗑️ </a>
+                        <a href='/rfstore_frontend/produto_alterar.php?id=" . $linha["id"] . "' class='btn btn-primary'> ✏️ </a>
+                    </td>         
+                </tr>
+                ";
+    }
+?>
 
-        foreach ($retorno as $linha) {
-            echo "
-                    <tr>
-                        <td>" . $linha['id'] . "</td>
-                        <td>" . $linha['nome'] . "</td>
-                        <td>" . $linha['preco'] . "</td>   
-                        <td>" . $linha['categoria_nome'] . "</td>                        
-                        <td><img src='data:image/png;base64," . base64_encode($linha['imagem']) . "' class='imagem-produto'></td>                        
-                        <td>
-                            <a href='/rfstore_frontend/produto_deletar.php?id=" . $linha["id"] . "' class='btn btn-danger'> 🗑️ </a>
-                            <a href='/rfstore_frontend/produto_alterar.php?id=" . $linha["id"] . "' class='btn btn-primary'> ✏️ </a>
-                        </td>         
-                    </tr>
-                    ";
-        }
-        ?>
     </tbody>
 
 

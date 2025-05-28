@@ -1,11 +1,14 @@
 <?php
     session_start();
-    if((!isset ($_SESSION['login']) == true) and (!isset ($_SESSION['senha']) == true))
-    {
-    header('location:index.php');
+    // Inicia a sessão PHP para manter o usuário autenticado entre as páginas.
+
+    if((!isset ($_SESSION['login']) == true) and (!isset ($_SESSION['senha']) == true)) {
+        header('location:index.php');
+        // Se as variáveis de sessão 'login' e 'senha' não estiverem definidas, redireciona para a página de login.
     }
 
     include("banco.php");
+    // Inclui o arquivo de conexão com o banco de dados.
 
     $sql = "SELECT 
                 produtos.*,
@@ -14,14 +17,20 @@
                 produtos
             INNER JOIN 
                 categorias ON produtos.categoria_id = categorias.id";
+    // Consulta SQL para buscar todos os produtos com seus respectivos nomes de categoria.
 
     $resultado = $con->query($sql);
-    $dados = mysqli_fetch_assoc($resultado);
+    // Executa a consulta SQL no banco de dados.
 
-    // Consulta simples apenas para pegar todas categorias
+    $dados = mysqli_fetch_assoc($resultado);
+    // Recupera a primeira linha do resultado da consulta como um array associativo.
+    // OBS: Isso pode causar erro lógico se não houver produto ou se estiver criando um novo — talvez essa linha nem seja necessária aqui.
+
+    // Consulta para buscar todas as categorias disponíveis no banco de dados.
     $sql_categorias = "SELECT * FROM categorias";
     $categorias = $con->query($sql_categorias);
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">

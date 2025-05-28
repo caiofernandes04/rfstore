@@ -1,5 +1,8 @@
 <?php
     session_start();
+
+    // Verifica se as variáveis de sessão 'login' e 'senha' estão definidas
+    // Se não estiverem, redireciona o usuário para a página de login   
     if((!isset ($_SESSION['login']) == true) and (!isset ($_SESSION['senha']) == true))
     {
     header('location:index.php');
@@ -45,60 +48,70 @@
 
         <?php
 
-        include("banco.php");
-        
-        $nome = "";
-        if (isset($_GET['nome'])) // isset() - essa função significa "existe?"
-        {
-            $nome = ($_GET['nome']);
-        }
+    // Inclui o arquivo que contém a conexão com o banco de dados
+    include("banco.php");
+    
+    // Inicializa a variável $nome como string vazia
+    $nome = "";
 
-        $sql = "SELECT * FROM categorias WHERE nome like '%$nome%' ";
+    // Verifica se o parâmetro 'nome' foi passado via GET
+    if (isset($_GET['nome'])) // isset() verifica se a variável foi definida
+    {
+        $nome = ($_GET['nome']); // Armazena o valor do parâmetro na variável $nome
+    }
 
-        $retorno = $con->query($sql);
+    // Cria uma consulta SQL para buscar categorias com nomes semelhantes ao informado
+    $sql = "SELECT * FROM categorias WHERE nome like '%$nome%' ";
 
-        if ($retorno->num_rows == 1) {
-            echo " 
-             <table class = 'table table-hower'>
-             <thead>
-             <td>ID</td> 
-             <td>NOME</td>
-             <td>OPÇÕES</td>
-             </thead> 
-             <p style='text-align: center;'>
-                Encontrada $retorno->num_rows categorias.<br>
-            </p>
-             ";
-        } else if ($retorno->num_rows > 1) {
+    // Executa a consulta e armazena o resultado
+    $retorno = $con->query($sql);       
 
-            echo " 
-             <table class = 'table table-hower'>
-             <thead>
-             <td>ID</td> 
-             <td>NOME</td>
-             <td>OPÇÕES</td>
-             </thead> 
-             <p style='text-align: center;'>
-                Encontradas $retorno->num_rows categorias.<br>
-            </p>
-             ";
-        } else {
-            echo "Nenhuma categoria com o nome \"" . $nome . "\" foi encontrado. Tente novamente outro nome! <br>";
-        }
+    // Verifica se foi encontrada exatamente uma categoria
+    if ($retorno->num_rows == 1) {
+        echo " 
+         <table class = 'table table-hower'>
+         <thead>
+         <td>ID</td> 
+         <td>NOME</td>
+         <td>OPÇÕES</td>    
+         </thead> 
+         <p style='text-align: center;'>
+            Encontrada $retorno->num_rows categorias.<br>
+        </p>
+         ";
+    } else if ($retorno->num_rows > 1) {
+        // Se mais de uma categoria for encontrada
+        echo " 
+         <table class = 'table table-hower'>
+         <thead>
+         <td>ID</td> 
+         <td>NOME</td>
+         <td>OPÇÕES</td>
+         </thead> 
+         <p style='text-align: center;'>
+            Encontradas $retorno->num_rows categorias.<br>
+        </p>
+         ";
+    } else {
+        // Caso nenhuma categoria seja encontrada, exibe mensagem
+        echo "Nenhuma categoria com o nome \"" . $nome . "\" foi encontrado. Tente novamente outro nome! <br>";
+    }
 
-        foreach ($retorno as $linha) {
-            echo "
-                    <tr>
-                        <td>" . $linha['id'] . "</td>
-                        <td>" . $linha['nome'] . "</td>                       
-                        <td>
-                            <a href='/rfstore_frontend/categoria_deletar.php?id=" . $linha["id"] . "' class='btn btn-danger'> 🗑️ </a>
-                            <a href='/rfstore_frontend/categoria_alterar.php?id=" . $linha["id"] . "' class='btn btn-primary'> ✏️ </a>
-                        </td>         
-                    </tr>
-                    ";
-        }
-        ?>
+    // Percorre os resultados retornados e exibe cada categoria em uma linha da tabela
+    foreach ($retorno as $linha) {
+        echo "
+                <tr>
+                    <td>" . $linha['id'] . "</td>
+                    <td>" . $linha['nome'] . "</td>                       
+                    <td>
+                        <a href='/rfstore_frontend/categoria_deletar.php?id=" . $linha["id"] . "' class='btn btn-danger'> 🗑️ </a>
+                        <a href='/rfstore_frontend/categoria_alterar.php?id=" . $linha["id"] . "' class='btn btn-primary'> ✏️ </a>
+                    </td>         
+                </tr>
+                ";
+    }
+?>
+
     </tbody>
 
 

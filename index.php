@@ -132,40 +132,58 @@
     </header>
 
     <?php
-      echo '<div class="category-bar">';
-      echo '<form action="index.php" method="get">';
-      echo '<button type="submit" name="id" value="">Todos</button>';
+    // Inicia a barra de categorias
+    echo '<div class="category-bar">';
+    echo '<form action="index.php" method="get">';
+    
+    // Botão para mostrar todos os produtos, sem filtro de categoria
+    echo '<button type="submit" name="id" value="">Todos</button>';
 
-      if ($resultadocategoria->num_rows > 0) {
+    // Verifica se há categorias retornadas do banco de dados
+    if ($resultadocategoria->num_rows > 0) {
+        // Percorre as categorias e cria um botão para cada uma
         while ($categoria = $resultadocategoria->fetch_assoc()) {
             echo '<button type="submit" name="id" value="' . $categoria["id"] . '">' . $categoria["nome"] . '</button>';
         }
-      }
+    }
 
-      echo '</form>';
-      echo '</div>';
-    ?>
+    echo '</form>';
+    echo '</div>';
+?>
+
 
     <div class="grid">
       <?php
+      // Inicializa a variável $id como string vazia
       $id = "";
+
+      // Verifica se o parâmetro 'id' foi passado pela URL (método GET)
       if (isset($_GET['id'])) {
         $id = $_GET['id'];
       }
 
+      // Monta a consulta SQL buscando produtos cuja categoria_id contenha o valor de $id
+      // OBS: Usar LIKE com % pode causar problemas de performance e insegurança (SQL Injection)
       $sql = "SELECT * FROM produtos where categoria_id like '%$id%'";
+
+      // Executa a consulta no banco de dados
       $resultado = $con->query($sql);
 
+      // Verifica se a consulta retornou algum resultado
       if ($resultado->num_rows > 0) {
+          // Loop por cada produto retornado
           while ($produto = $resultado->fetch_assoc()) {
+            // Exibe o produto em um bloco HTML formatado
             echo "<div class='produto'>";
             echo "<div class='img-container'>";
-            echo "<img src='data:image/jpeg;base64,".base64_encode($produto['imagem'])."' alt='".$produto['nome']."'>";
+            echo "<img src='data:image/png;base64," . base64_encode($produto['imagem']) . "' alt='" . $produto['nome'] . "'>";
             echo "</div>";
             echo "<h2>" . $produto['nome'] . "</h2>";
             echo "<p class='preco'>R$ " . number_format($produto['preco'], 2, ',', '.') . "</p>";
             echo "<div class='botoes'>";
             echo "<a class='botao' href='produto.php?id=" . $produto['id'] . "'>Ver Produto</a>";
+            
+            // Formulário para adicionar o produto ao carrinho
             echo "<form action='adicionar_carrinho.php' method='get'>";
             echo "<button class='botao' type='submit' name='id' value='" . $produto['id'] . "'>Adicionar ao carrinho</button>";
             echo "</form>";
@@ -173,9 +191,11 @@
             echo "</div>";              
           }
       } else {
+          // Caso não haja produtos retornados, exibe mensagem
           echo "<p>Nenhum produto encontrado.</p>";
       }
-      ?>
+?>
+
     </div>
 </body>
 </html>

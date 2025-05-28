@@ -1,15 +1,19 @@
 <?php
+// Inicia a sessão 
 session_start();
 
+// Verifica se as variáveis de login e senha estão definidas na sessão.
+// Se não estiverem, manda o usuário para a página de login.
 if (!isset($_SESSION['login']) || !isset($_SESSION['senha'])) {
     header('location:index.php');
-    exit();
+    exit(); // faz o script parar de executar após redirecionar
 }
 
+// Verifica se o botão de "reset_session" foi clicado (logout)
 if (isset($_POST['reset_session'])) {
-    session_unset(); 
-    session_destroy(); 
-    header("Location: index.php"); 
+    session_unset(); // Limpa todas as variáveis da sessão
+    session_destroy(); // Destroi a sessão
+    header("Location: index.php"); // Redireciona para a página de login
     exit();
 }
 ?>
@@ -52,73 +56,86 @@ if (isset($_POST['reset_session'])) {
 <body>
     <tbody>
         <?php
-        include("banco.php");
+   
+    include("banco.php");
 
-        $vendas_id = "";
+    // Inicializa a variável com valor vazio para evitar erro de variável indefinida
+    $vendas_id = "";
 
-        if (isset($_GET['vendas_id'])) {
-            $vendas_id = $_GET['vendas_id'];
+    // Verifica se foi passado um 'vendas_id' via GET (formulário de busca)
+    if (isset($_GET['vendas_id'])) {
+        $vendas_id = $_GET['vendas_id'];
+}
+
+    // Monta a consulta SQL que busca os dados da venda e seus respectivos itens
+    $sql = "
+        SELECT vendas.id AS venda_id,
+           vendas.data_venda,
+           produtos.nome AS nome_produto,
+           produtos.preco,
+           vendas_itens.quantidade
+        FROM vendas
+        INNER JOIN vendas_itens ON vendas.id = vendas_itens.venda_id
+        INNER JOIN produtos ON vendas_itens.produto_id = produtos.id
+        WHERE vendas.id LIKE '%$vendas_id%'
+        ORDER BY vendas.id, vendas.data_venda";
+
+    // Executa a consulta no banco
+    $retorno = $con->query($sql);
+
+    // Verifica se a consulta retornou algum resultado
+    if ($retorno->num_rows > 0) {
+    // Exibe o cabeçalho da tabela
+        echo "
+        <table class='table table-hover'>
+            <thead>
+                <tr>
+                    <th>ID da Venda</th>
+                    <th>Data</th>
+                    <th>Produto</th>
+                    <th>Preço Unitário</th>
+                    <th>Quantidade</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+        ";
+
+    // Variável para controlar quando muda o ID da venda
+    $ultima_venda = "";
+
+    // Percorre todas as linhas retornadas
+    foreach ($retorno as $linha) {
+        $venda_id = $linha['venda_id'];
+        // Calcula o subtotal do item (preço x quantidade)
+        $subtotal = $linha['preco'] * $linha['quantidade'];
+
+        // Se for uma nova venda, imprime uma linha de separação
+        if ($venda_id !== $ultima_venda) {
+            echo "<tr><td colspan='6'><strong>Venda #$venda_id - " . date('d/m/Y H:i', strtotime($linha['data_venda'])) . "</strong></td></tr>";
+            $ultima_venda = $venda_id;
         }
 
+        // Exibe os dados da linha (produto)
+        echo "
+            <tr>
+                <td>" . $linha['venda_id'] . "</td>
+                <td>" . date('d/m/Y H:i', strtotime($linha['data_venda'])) . "</td>
+                <td>" . $linha['nome_produto'] . "</td>
+                <td>R$ " . number_format($linha['preco'], 2, ',', '.') . "</td>
+                <td>" . $linha['quantidade'] . "</td>
+                <td>R$ " . number_format($subtotal, 2, ',', '.') . "</td>
+            </tr>
+        ";
+    }
 
-        $sql = "
-            SELECT vendas.id AS venda_id,
-                vendas.data_venda,
-                produtos.nome AS nome_produto,
-                produtos.preco,
-                vendas_itens.quantidade
-            FROM vendas
-            INNER JOIN vendas_itens ON vendas.id = vendas_itens.venda_id
-            INNER JOIN produtos ON vendas_itens.produto_id = produtos.id
-            WHERE vendas.id LIKE '%$vendas_id%'
-            ORDER BY vendas.id, vendas.data_venda";
-
-        $retorno = $con->query($sql);
-
-        if ($retorno->num_rows > 0) {
-            echo "
-            <table class='table table-hover'>
-                <thead>
-                    <tr>
-                        <th>ID da Venda</th>
-                        <th>Data</th>
-                        <th>Produto</th>
-                        <th>Preço Unitário</th>
-                        <th>Quantidade</th>
-                        <th>Subtotal</th>
-                    </tr>
-                </thead>
-                <tbody>
-            ";
-
-            $ultima_venda = "";
-
-            foreach ($retorno as $linha) {
-                $venda_id = $linha['venda_id'];
-                $subtotal = $linha['preco'] * $linha['quantidade'];
-
-                if ($venda_id !== $ultima_venda) {
-                    echo "<tr><td colspan='6'><strong>Venda #$venda_id - " . date('d/m/Y H:i', strtotime($linha['data_venda'])) . "</strong></td></tr>";
-                    $ultima_venda = $venda_id;
-                }
-
-                echo "
-                    <tr>
-                        <td>" . $linha['venda_id'] . "</td>
-                        <td>" . date('d/m/Y H:i', strtotime($linha['data_venda'])) . "</td>
-                        <td>" . $linha['nome_produto'] . "</td>
-                        <td>R$ " . number_format($linha['preco'], 2, ',', '.') . "</td>
-                        <td>" . $linha['quantidade'] . "</td>
-                        <td>R$ " . number_format($subtotal, 2, ',', '.') . "</td>
-                    </tr>
-                ";
-            }
-
-            echo "</tbody></table>";
-        } else {
-            echo "<p style='text-align:center;'>Nenhuma venda encontrada.</p>";
-        }
-        ?>
+    // Fecha o corpo da tabela
+    echo "</tbody></table>";
+} else {
+    // Caso nenhuma venda tenha sido encontrada
+    echo "<p style='text-align:center;'>Nenhuma venda encontrada.</p>";
+}
+?>
     </tbody>
 </body>
 

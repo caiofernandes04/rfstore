@@ -105,32 +105,36 @@
     <main>
       <div class="produto-detalhe">
         <?php
-          $id = "";
+          $id = ""; // Inicializa a variável $id como uma string vazia
 
-          if (isset($_GET['id']))
-          {
-           $id = ($_GET['id']);
-           }
-   
+          if (isset($_GET['id'])) {
+            $id = ($_GET['id']); // Se o parâmetro 'id' estiver presente na URL, atribui seu valor à variável $id
+          }
+
+          // Cria uma query SQL para buscar o produto com o id fornecido
           $sql = "SELECT * FROM produtos where id='$id'";
-          $resultado = $con->query($sql);
+          $resultado = $con->query($sql); // Executa a query no banco de dados
 
+          // Verifica se a consulta retornou algum resultado
           if ($resultado->num_rows > 0) {
+            // Percorre todos os resultados retornados (neste caso, deve ser apenas um)
             while ($produto = $resultado->fetch_assoc()) {
+              // Exibe os dados do produto (imagem, nome, preço e botão de compra)
               echo "<div class='produto'>";
               echo "<img src='data:image/png;base64," . base64_encode($produto['imagem']) . "' class='imagem-produto'>";
               echo "<div class='produto-info'>";
               echo "<h2>" . $produto['nome'] . "</h2>";
               echo "<p class='preco'>R$ " . number_format($produto['preco'], 2, ',', '.') . "</p>";
               echo "<form action='adicionar_carrinho.php' method='get'>";
-              echo "<button class='botao-comprar' type = 'submit' name = 'id' value = '" . $produto['id'] . "'>Comprar Agora</button>"; 
+              echo "<button class='botao-comprar' type='submit' name='id' value='" . $produto['id'] . "'>Comprar Agora</button>"; 
               echo "</div>";
               echo "</div>";                
             } 
           } else {
+            // Caso nenhum produto seja encontrado com o id informado
             echo "<p>Nenhum produto encontrado.</p>";
-            }
-          ?>
+          }
+        ?>
       </div>
     </main>
   </body>
